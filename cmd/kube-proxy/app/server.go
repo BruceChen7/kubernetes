@@ -521,12 +521,14 @@ with the apiserver API to configure the proxy.`,
 
 // ProxyServer represents all the parameters required to start the Kubernetes proxy server. All
 // fields are required.
+// 支持5中模式的代理:
+// userspace ipatables, ipvs, kernelspace, winuserspace
 type ProxyServer struct {
 	Client                 clientset.Interface
 	EventClient            v1core.EventsGetter
-	IptInterface           utiliptables.Interface
+	IptInterface           utiliptables.Interface // 定义操作iptable的方法集合
 	IpvsInterface          utilipvs.Interface
-	IpsetInterface         utilipset.Interface
+	IpsetInterface         utilipset.Interface // 定义操作ipset的方法及
 	execer                 exec.Interface
 	Proxier                proxy.Provider
 	Broadcaster            record.EventBroadcaster
@@ -536,7 +538,7 @@ type ProxyServer struct {
 	ProxyMode              string
 	NodeRef                *v1.ObjectReference
 	CleanupIPVS            bool
-	MetricsBindAddress     string
+	MetricsBindAddress     string //127.0.0.1:10249  http prometheus metrics port
 	BindAddressHardFail    bool
 	EnableProfiling        bool
 	UseEndpointSlices      bool

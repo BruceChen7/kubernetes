@@ -56,6 +56,7 @@ import (
 )
 
 const (
+	// 创建自定义iptables链
 	// the services chain
 	kubeServicesChain utiliptables.Chain = "KUBE-SERVICES"
 
@@ -72,6 +73,7 @@ const (
 	KubeMarkMasqChain utiliptables.Chain = "KUBE-MARK-MASQ"
 
 	// KubeMarkDropChain is the mark-for-drop chain
+	// 打标签链，对于进入此链的报文打标签(0x800)，预示此包将要被放弃
 	KubeMarkDropChain utiliptables.Chain = "KUBE-MARK-DROP"
 
 	// the kubernetes forward chain
@@ -182,7 +184,8 @@ type Proxier struct {
 	endpointsChanges *proxy.EndpointChangeTracker
 	serviceChanges   *proxy.ServiceChangeTracker
 
-	mu           sync.Mutex // protects the following fields
+	mu sync.Mutex // protects the following fields
+	// 同serviceChanges 的第二及map 结构，记录了所有namespace下需要更新iptables规则的service
 	serviceMap   proxy.ServiceMap
 	endpointsMap proxy.EndpointsMap
 	portsMap     map[utilproxy.LocalPort]utilproxy.Closeable
